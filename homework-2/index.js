@@ -88,6 +88,16 @@ if (error == null) {
     error = validateSide(sideC);
 }
 
+function highestNumber (sideA, sideB, sideC){
+    if(sideA > sideB && sideA > sideC){
+         return sideA;
+    }else if (sideB > sideA && sideB > sideC){
+        return sideB;
+    }else{
+        return sideC;
+    } 
+}
+
 if (error == null) {
     let p = (sideA + sideB + sideC) / 2;
     let areaOfTriangle = Math.sqrt(p * (p - sideA) * (p - sideB) * (p - sideC));
@@ -95,7 +105,13 @@ if (error == null) {
     let areaOfTriangleNumber = parseFloat(fixedAreaOfTriangle);
     console.log("The area of the triangle: " + areaOfTriangleNumber)
 
-    if (sideA ** 2 == sideB ** 2 + sideC ** 2) {
+    
+    let hypotenuse = highestNumber (sideA, sideB, sideC);
+    let sides = [sideA, sideB, sideC]
+    let cathets = sides.filter(side => side != hypotenuse);
+
+
+    if ( hypotenuse ** 2 == cathets[0] ** 2 + cathets[1] ** 2) {
         console.log("Цей трикутник є прямокутним")
     } else {
         console.log("Цей трикутник не є прямокутним")
