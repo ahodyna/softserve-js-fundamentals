@@ -6,15 +6,17 @@
 
 let arr = [2, 3, 4, 5];
 let product = 1;
+let i = 0;
 
-for (let i = 0; i < arr.length; i++) {
+for (; i < arr.length; i++) {
     product *= arr[i]
 }
 console.log(product)
 
 
-while (product < arr.length) {
+while (i < arr.length) {
     product *= arr[i]
+    i++
 }
 console.log(product)
 
@@ -48,16 +50,16 @@ function randArray(numbers) {
 
     for (let i = 0; i < numbers; i++) {
 
-        min = Math.ceil(1);
-        max = Math.floor(500);
-        let elem = Math.floor(Math.random() * (500 - 1 + 1)) + 1;
+        let min = 1;
+        let max = 500;
+        let elem = Math.floor(min + Math.random() * (max + 1 - min));
 
         k.push(elem)
     }
     return k
 }
 
-console.log(randArray(5))
+console.log(randArray(6))
 
 // task 4
 
