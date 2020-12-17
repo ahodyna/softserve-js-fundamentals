@@ -27,9 +27,53 @@ addListMenuButton.addEventListener('click', function () {
         listMenuInput.value = '';
 
         printListMenu();
-        printList(todoLists.length - 1)
+        printTodoDetails(todoLists.length - 1)
     }
 });
+
+function createButtonComponent(id, className, text, clickActionCallback) {
+
+    let buttonNode = document.createElement('button')
+    buttonNode.className = className
+    buttonNode.id = id
+    buttonNode.textContent = text
+    buttonNode.addEventListener('click', clickActionCallback)
+
+    return buttonNode;
+}
+
+
+function printTodoDetails(listIndex) {
+
+    console.log('printTodoDetails: ', listIndex)
+    const todoItemCreationSection = document.getElementById('todoItemCreationSection');
+    todoItemCreationSection.innerHTML = ""
+
+    const deleteButtonSection = document.getElementById('deleteButtonSection');
+    deleteButtonSection.innerHTML = "";
+
+    const listNameSection = document.getElementById('listNameSection');
+    listNameSection.innerHTML = "";
+
+    if (listIndex != null) {
+        const addItemInputNode = document.createElement('input')
+        addItemInputNode.addEventListener('keyup', (event) => onkeyupAddTodoItemInput(event, listIndex))
+        addItemInputNode.id = 'addItemInput'
+        addItemInputNode.className = 'inputForm'
+        addItemInputNode.setAttribute('placeholder', 'Add item')
+        todoItemCreationSection.appendChild(addItemInputNode);    
+    
+        const addItemButtonNode = createButtonComponent('buttonAddItem', 'addButton', 'Add', () => addTodoItem(listIndex));
+        todoItemCreationSection.appendChild(addItemButtonNode);
+
+        const deleteListButtonNode = createButtonComponent('buttonDeleteItem', 'deleteList', 'Delete list', () => deleteTodoList(listIndex));
+        deleteButtonSection.appendChild(deleteListButtonNode);
+
+        listNameSection.innerHTML = todoLists[listIndex].title;
+    }
+
+    printList(listIndex)
+}
 
 function printListMenu() {
 
@@ -37,7 +81,7 @@ function printListMenu() {
 
     todoLists.forEach(function (todo, i) {
         componentListMenu += `
-        <button onclick="printList(${i})"  id="todo_${i}">${todo.title}</button>
+        <button class="buttonListName" onclick="printTodoDetails(${i})"  id="todo_${i}">${todo.title}</button>
         `;
     });
 
@@ -51,26 +95,16 @@ function printListMenu() {
 function printList(listIndex) {
 
     let todoItemsContent = '';
-    let buttonAddItem = '';
-    let buttonDeleteAll = '';
-    let inputElem = '';
-    let listName = '';
 
     if (listIndex != null) {
-
-        buttonDeleteAll = `<button onclick="deleteTodoList(${listIndex})">Delete List</button>`;
-        inputElem = `<input onkeyup="onkeyupAddTodoItemInput(event, ${listIndex})" id="addItemInput" placeholder="Add item">`;
-        buttonAddItem = `<button onclick="addTodoItem(${listIndex})" id="buttonAddItem">Add</button>`;
-        listName = todoLists[listIndex].title;
-
         let items = todoLists[listIndex].items
         items.forEach(function (item, i) {
 
             todoItemsContent += `
-        <li>
-            <input type='checkbox' onclick='checkItem(${listIndex}, ${i})' id='${i}' ${item.checked ? 'checked' : ''}>
+        <li class="inputCheckboxElem">
+            <input type='checkbox' onclick='checkItem(${listIndex}, ${i})' id='check_${i}' ${item.checked ? 'checked' : ''}>
             <label for='${i}'>${item.todo}</label>
-            <button onclick="deleteElem(${listIndex}, ${i})">delete</button>
+            <button onclick="deleteElem(${listIndex}, ${i})"><i class="fas fa-trash fa-2x"></i></button>
         </li>
         `;
 
@@ -79,38 +113,24 @@ function printList(listIndex) {
 
     let listToDo = document.querySelector('#listToDo');
     listToDo.innerHTML = todoItemsContent;
-
-    let todoButtonCreationSection = document.getElementById('todoButtonCreationSection');
-    todoButtonCreationSection.innerHTML = buttonAddItem;
-
-    let deleteButtonSection = document.getElementById('deleteButtonSection');
-    deleteButtonSection.innerHTML = buttonDeleteAll;
-
-    let todoItemCreationSection = document.getElementById('todoItemCreationSection');
-    todoItemCreationSection.innerHTML = inputElem;
-
-    let listNameSection = document.getElementById('listNameSection');
-    listNameSection.innerHTML = listName;
 };
 
 function onkeyupAddTodoItemInput(event, todoIndex) {
-
+    console.log('onkeyupAddTodoItemInput: ', todoIndex)
     if (event.key === 'Enter') {
         addTodoItem(todoIndex);
     }
 };
 
 function deleteTodoList(index) {
-
     todoLists.splice(index, 1);
-
     printListMenu()
-    printList(todoLists.length > 0 ? 0 : null)
-
+    printTodoDetails(todoLists.length > 0? 0: null)
 };
 
 function addTodoItem(todoIndex) {
 
+    console.log('add Todo Item: ', todoIndex, todoLists[todoIndex].title)
     let inputFieldForItem = document.getElementById('addItemInput');
 
     if (inputFieldForItem.value == "") {
@@ -123,7 +143,8 @@ function addTodoItem(todoIndex) {
         };
 
         todoLists[todoIndex].items.push(newItem);
-        printList(todoLists.length - 1);
+        console.log('going to print list. todoIndex: ', todoIndex);
+        printList(todoIndex);
         inputFieldForItem.value = "";
     }
 };
@@ -131,11 +152,12 @@ function addTodoItem(todoIndex) {
 function deleteElem(todoIndex, indexItem) {
     todoLists[todoIndex].items.splice(indexItem, 1);
 
-    printList(todoLists.length - 1);
+    printList(todoIndex);
 };
 
 function checkItem(todoIndex, indexItem) {
+    console.log('todoIndex: ', todoIndex, ' indexItem:', indexItem, 'elem:', todoLists[todoIndex].items[indexItem])
     todoLists[todoIndex].items[indexItem].checked = !todoLists[todoIndex].items[indexItem].checked;
 
-    printList(todoLists.length - 1);
+    printList(todoIndex);
 };
