@@ -28,9 +28,18 @@ img{
 
 .generalContent{
   display: grid;
-  grid-template-columns: 2fr 3fr 3.5fr 3.5fr; 
+  grid-template-columns: 2fr 3.5fr 3.5fr 3fr; 
   padding-top: .5rem;
 }
+
+@media screen and (max-width: 1400px) {
+  .generalContent{
+    display: grid;
+    grid-template-columns: 1fr 4fr 5.5fr 1.5fr; 
+    padding-top: .5rem;
+  }
+}
+
 
 #sectionMenu{
   grid-column-start: 2;

@@ -2,7 +2,6 @@
 let listMenuInput = document.getElementById('listMenuInput');
 let addListMenuButton = document.getElementById('addListMenuButton');
 
-let todoLists = [];
 
 listMenuInput.addEventListener("keyup", function (event) {
 
@@ -18,16 +17,11 @@ addListMenuButton.addEventListener('click', function () {
         return false;
     } else {
 
-        let todoListData = {
-            title: listMenuInput.value,
-            items: []
-        }
-
-        todoLists.push(todoListData);
+        TodoDataStorage.addTodo(new TodoList(listMenuInput.value, []))
         listMenuInput.value = '';
 
         printListMenu();
-        printTodoDetails(todoLists.length - 1)
+        printTodoDetails(TodoDataStorage.todoAmount() - 1)
     }
 });
 
@@ -69,7 +63,7 @@ function printTodoDetails(listIndex) {
         const deleteListButtonNode = createButtonComponent('buttonDeleteItem', 'deleteList', 'Delete list', () => deleteTodoList(listIndex));
         deleteButtonSection.appendChild(deleteListButtonNode);
 
-        listNameSection.innerHTML = todoLists[listIndex].title;
+        listNameSection.innerHTML = TodoDataStorage.getListTitleByIndex(listIndex);
     }
 
     printList(listIndex)
@@ -79,9 +73,9 @@ function printListMenu() {
 
     let componentListMenu = '';
 
-    todoLists.forEach(function (todo, i) {
+    TodoDataStorage.getAllTitles().forEach(function (title, i) {
         componentListMenu += `
-        <button class="buttonListName" onclick="printTodoDetails(${i})"  id="todo_${i}">${todo.title}</button>
+        <button class="buttonListName" onclick="printTodoDetails(${i})"  id="todo_${i}">${title}</button>
         `;
     });
 
@@ -97,7 +91,8 @@ function printList(listIndex) {
     let todoItemsContent = '';
 
     if (listIndex != null) {
-        let items = todoLists[listIndex].items
+
+        let items = TodoDataStorage.getListItemsByIndex(listIndex)
         items.forEach(function (item, i) {
 
             todoItemsContent += `
@@ -123,26 +118,21 @@ function onkeyupAddTodoItemInput(event, todoIndex) {
 };
 
 function deleteTodoList(index) {
-    todoLists.splice(index, 1);
+    TodoDataStorage.deleteTodoListByIndex(index);
     printListMenu()
-    printTodoDetails(todoLists.length > 0? 0: null)
+    printTodoDetails(TodoDataStorage.todoAmount() > 0? 0: null)
 };
 
 function addTodoItem(todoIndex) {
 
-    console.log('add Todo Item: ', todoIndex, todoLists[todoIndex].title)
+    console.log('add Todo Item: ', todoIndex, TodoDataStorage.getListTitleByIndex(todoIndex))
     let inputFieldForItem = document.getElementById('addItemInput');
 
     if (inputFieldForItem.value == "") {
         alert("Please add item");
         return false;
     } else {
-        let newItem = {
-            todo: inputFieldForItem.value,
-            checked: false
-        };
-
-        todoLists[todoIndex].items.push(newItem);
+        TodoDataStorage.addTodoItemByIndex(todoIndex, new TodoItem(false, inputFieldForItem.value))
         console.log('going to print list. todoIndex: ', todoIndex);
         printList(todoIndex);
         inputFieldForItem.value = "";
@@ -150,14 +140,11 @@ function addTodoItem(todoIndex) {
 };
 
 function deleteElem(todoIndex, indexItem) {
-    todoLists[todoIndex].items.splice(indexItem, 1);
-
+    TodoDataStorage.deleteTodoItemByIndexes(todoIndex, indexItem);
     printList(todoIndex);
 };
 
 function checkItem(todoIndex, indexItem) {
-    console.log('todoIndex: ', todoIndex, ' indexItem:', indexItem, 'elem:', todoLists[todoIndex].items[indexItem])
-    todoLists[todoIndex].items[indexItem].checked = !todoLists[todoIndex].items[indexItem].checked;
-
+    TodoDataStorage.checkTodoItemByIndexes(todoIndex, indexItem);
     printList(todoIndex);
 };
