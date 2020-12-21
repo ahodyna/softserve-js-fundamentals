@@ -15,14 +15,16 @@ listMenuInput.addEventListener("keyup", function (event) {
 
     if (event.key === 'Enter') {
         addListMenuButton.click();
+    } else {
+        document.getElementById("listMenuEmptyInputPopup").classList.remove('show')
     }
 });
 
 addListMenuButton.addEventListener('click', function () {
 
     if (listMenuInput.value == "") {
-        alert("Name list must be filled out");
-        return false;
+        document.getElementById("listMenuEmptyInputPopup").classList.add('show')
+        
     } else {
 
         TodoDataStorage.addTodo(new TodoList(listMenuInput.value, []))
@@ -44,6 +46,20 @@ function createButtonComponent(id, className, text, clickActionCallback) {
     return buttonNode;
 }
 
+function createPopupComponent(id, text) {
+
+    let popupNode = document.createElement('div')
+    popupNode.className = 'popup'
+
+    let popupSpanNode = document.createElement('span')
+    popupSpanNode.id = id
+    popupSpanNode.textContent = text
+    popupSpanNode.className = 'popuptext'
+    popupNode.appendChild(popupSpanNode);
+
+    return popupNode;
+}
+
 
 function printTodoDetails(listIndex) {
 
@@ -58,6 +74,9 @@ function printTodoDetails(listIndex) {
     listNameSection.innerHTML = "";
 
     if (listIndex != null) {
+        let componentPopup = createPopupComponent('listDstailsEmptyInputPopup', 'Please fill item name');
+        todoItemCreationSection.appendChild(componentPopup)
+      
         const addItemInputNode = document.createElement('input')
         addItemInputNode.addEventListener('keyup', (event) => onkeyupAddTodoItemInput(event, listIndex))
         addItemInputNode.id = 'addItemInput'
@@ -122,6 +141,8 @@ function onkeyupAddTodoItemInput(event, todoIndex) {
     console.log('onkeyupAddTodoItemInput: ', todoIndex)
     if (event.key === 'Enter') {
         addTodoItem(todoIndex);
+    }else {
+        document.getElementById("listDstailsEmptyInputPopup").classList.remove('show')
     }
 };
 
@@ -137,8 +158,8 @@ function addTodoItem(todoIndex) {
     let inputFieldForItem = document.getElementById('addItemInput');
 
     if (inputFieldForItem.value == "") {
-        alert("Please add item");
-        return false;
+        document.getElementById("listDstailsEmptyInputPopup").classList.add('show')
+        
     } else {
         TodoDataStorage.addTodoItemByIndex(todoIndex, new TodoItem(false, inputFieldForItem.value))
         console.log('going to print list. todoIndex: ', todoIndex);
