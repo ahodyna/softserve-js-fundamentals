@@ -1,3 +1,11 @@
+window.addEventListener('load', function () {
+    printListMenu();
+
+    if (TodoDataStorage.todoAmount() != 0) {
+        printTodoDetails(0)
+    }
+})
+
 // added list Menu
 let listMenuInput = document.getElementById('listMenuInput');
 let addListMenuButton = document.getElementById('addListMenuButton');
@@ -120,7 +128,7 @@ function onkeyupAddTodoItemInput(event, todoIndex) {
 function deleteTodoList(index) {
     TodoDataStorage.deleteTodoListByIndex(index);
     printListMenu()
-    printTodoDetails(TodoDataStorage.todoAmount() > 0? 0: null)
+    printTodoDetails(TodoDataStorage.todoAmount() > 0 ? 0 : null)
 };
 
 function addTodoItem(todoIndex) {

@@ -13,43 +13,67 @@ class TodoItem {
 }
 
 class TodoDataStorage {
-    static #todoLists = [];
+    static _todoListLocalStorageKey = 'todoListLocalStorageKey';
 
-    constructor() {}
+    constructor() { }
 
-    static addTodo(todoList) {
-        TodoDataStorage.#todoLists.push(todoList);
+    static _loadData() {
+        let str = localStorage.getItem(TodoDataStorage._todoListLocalStorageKey)
+        if (str != null) {
+            return JSON.parse(str)
+        } else {
+            return []
+        }
+
+    }
+
+    static _saveData(data) {
+        localStorage.setItem(TodoDataStorage._todoListLocalStorageKey, JSON.stringify(data))
+    }
+
+    static addTodo(todo) {
+        let todoArray = TodoDataStorage._loadData();
+        todoArray.push(todo);
+        TodoDataStorage._saveData(todoArray)
     }
 
     static todoAmount() {
-        return TodoDataStorage.#todoLists.length;
+        return TodoDataStorage._loadData().length;
     }
 
     static getListTitleByIndex(listIndex) {
-        return TodoDataStorage.#todoLists[listIndex].title;
+        return TodoDataStorage._loadData()[listIndex].title;
     }
 
     static getAllTitles() {
-        return TodoDataStorage.#todoLists.map(todoList => todoList.title);
+        return TodoDataStorage._loadData().map(todoList => todoList.title);
     }
 
     static getListItemsByIndex(listIndex) {
-        return TodoDataStorage.#todoLists[listIndex].items
+        return TodoDataStorage._loadData()[listIndex].items
     }
 
     static deleteTodoListByIndex(index) {
-       TodoDataStorage.#todoLists.splice(index, 1);
+        let todoArray = TodoDataStorage._loadData()
+        todoArray.splice(index, 1);
+        TodoDataStorage._saveData(todoArray)
     }
 
     static addTodoItemByIndex(todoIndex, item) {
-      TodoDataStorage.#todoLists[todoIndex].items.push(item);
+        let todoArray = TodoDataStorage._loadData()
+        todoArray[todoIndex].items.push(item);
+        TodoDataStorage._saveData(todoArray)
     }
 
     static deleteTodoItemByIndexes(todoIndex, indexItem) {
-        TodoDataStorage.#todoLists[todoIndex].items.splice(indexItem, 1);
+        let todoArray = TodoDataStorage._loadData()
+        todoArray[todoIndex].items.splice(indexItem, 1);
+        TodoDataStorage._saveData(todoArray)
     }
 
     static checkTodoItemByIndexes(todoIndex, indexItem) {
-        TodoDataStorage.#todoLists[todoIndex].items[indexItem].checked = !TodoDataStorage.#todoLists[todoIndex].items[indexItem].checked;
+        let todoArray = TodoDataStorage._loadData()
+        todoArray[todoIndex].items[indexItem].checked = !todoArray[todoIndex].items[indexItem].checked;
+        TodoDataStorage._saveData(todoArray)
     }
 }
