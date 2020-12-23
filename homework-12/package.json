@@ -1,0 +1,23 @@
+{
+  "name": "softserve-js-fundamentals",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ahodyna/softserve-js-fundamentals.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ahodyna/softserve-js-fundamentals/issues"
+  },
+  "homepage": "https://github.com/ahodyna/softserve-js-fundamentals#readme",
+  "dependencies": {
+    "node-static": "^0.7.11"
+  }
+}

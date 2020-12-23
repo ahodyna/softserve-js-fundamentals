@@ -1,0 +1,26 @@
+ [
+	{		
+		"title":"JavaScript, the Definitive Guide", 			
+		"publisher":"O'Reilly", 
+		"author":"David Flanagan", 		
+		"cover":"/images/cover_defguide.jpg"		  
+	},
+	{		
+		"title":"You Don't Know JS", 			
+		"publisher":"O'Reilly", 
+		"author":"Kyle Simpson", 		
+		"cover":"/images/cover_defguide.jpg"		  
+	},
+	{		
+		"title":"JavaScript Ninja", 			
+		"publisher":"Manning", 
+		"author":"John Resig", 		
+		"cover":"/images/cover_defguide.jpg"		  
+	}, 
+	{		
+		"title":"DOM Scripting", 
+		"publisher":"Friends of Ed", 
+		"author":"Jeremy Keith", 						
+		"cover":"/images/cover_domscripting.jpg" 		
+	 }
+]
