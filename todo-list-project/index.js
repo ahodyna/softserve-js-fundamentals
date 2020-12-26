@@ -102,7 +102,7 @@ function printTodoDetails(listIndex) {
         const addItemButtonNode = createButtonComponent('buttonAddItem', 'addButton', 'Add', () => addTodoItem(listIndex));
         todoItemCreationSection.appendChild(addItemButtonNode);
 
-        const deleteListButtonNode = createButtonComponent('buttonDeleteItem', 'deleteList', 'Delete list', () => openPopup(listIndex));
+        const deleteListButtonNode = createButtonComponent('buttonDeleteItem', 'deleteList', 'Delete list', () => openDeleteTodoDetailsPopup(listIndex));
         deleteButtonSection.appendChild(deleteListButtonNode);
 
         listNameSection.innerHTML = TodoDataStorage.getListTitleByIndex(listIndex);
@@ -112,30 +112,48 @@ function printTodoDetails(listIndex) {
 }
 
 // Section content (print list item)
-
 function printList(listIndex) {
+    let listToDo = document.querySelector('#listToDo');
+    listToDo.innerHTML = '';
 
-    let todoItemsContent = '';
 
     if (listIndex != null) {
 
         let items = TodoDataStorage.getListItemsByIndex(listIndex)
         items.forEach(function (item, i) {
-
-            todoItemsContent += `
-        <li class="inputCheckboxElem">
-            <input type='checkbox' onclick='checkItem(${listIndex}, ${i})' id='check_${i}' ${item.checked ? 'checked' : ''}>
-            <label for='${i}'>${item.todo}</label>
-            <button onclick="deleteElem(${listIndex}, ${i})"><i class="fas fa-trash fa-2x"></i></button>
-        </li>
-        `;
-
+            const itemComponent = createToDoItemComponent(item, i, listIndex);
+            listToDo.appendChild(itemComponent);
         })
     };
-
-    let listToDo = document.querySelector('#listToDo');
-    listToDo.innerHTML = todoItemsContent;
 };
+
+function createToDoItemComponent(item, i, listIndex) {
+    let liNode = document.createElement('li');
+    liNode.className = 'inputCheckboxElem';
+
+    let inputNode = document.createElement('input');
+    inputNode.type = 'checkbox';
+    inputNode.id = `check_${i}`;
+    inputNode.checked = item.checked;
+    inputNode.addEventListener('click', () => {
+        checkItem(listIndex, i)
+    });
+    liNode.appendChild(inputNode);
+
+    let labelNode = document.createElement('label');
+    labelNode.setAttribute('for', `check_${i}`);
+    labelNode.innerHTML = item.todo;
+    liNode.appendChild(labelNode);
+
+    let btnDeleteItemNode = document.createElement('button');
+    btnDeleteItemNode.addEventListener('click', () => {
+        deleteElem(listIndex, i)
+    });
+    btnDeleteItemNode.innerHTML = '<i class="fas fa-trash fa-2x"></i>';
+    liNode.appendChild(btnDeleteItemNode);
+
+    return liNode
+}
 
 function onkeyupAddTodoItemInput(event, todoIndex) {
 
@@ -171,24 +189,42 @@ function checkItem(todoIndex, indexItem) {
 };
 
 // Button delete Todo List & Popup elements
-function openPopup(index) {
-    const modalBoxNode = document.getElementById('modalBox');
+function openDeleteTodoDetailsPopup(index) {
+    const popup = createDeleteTodoDetailsPopupComponent(index);
+    const deleteTodoDetailSectionNode = document.getElementById('sectionContent')
+    deleteTodoDetailSectionNode.appendChild(popup)
+};
+
+function createDeleteTodoDetailsPopupComponent(index) {
+    const modalBoxNode = document.createElement('div');
+    modalBoxNode.className = 'modal';
+    modalBoxNode.id = 'modalBox'
     modalBoxNode.style.display = 'block';
-    modalBoxNode.setAttribute('listIndexToDelete', index)
-};
 
-function closePopup() {
-    document.getElementById('modalBox').style.display = 'none';
-};
+    const modalContentNode = modalBoxNode.appendChild(document.createElement('div'))
+    modalContentNode.className = 'modal-content'
 
+    const popupTitleNode = modalContentNode.appendChild(document.createElement('h3'))
+    popupTitleNode.innerHTML = 'Are you sure?'
 
-function deleteTodoList() {
-    const modalBoxNode = document.getElementById('modalBox');
-    const listIndexToDeleteStr = modalBoxNode.getAttribute('listIndexToDelete')
+    const popupDescriptionNode = modalContentNode.appendChild(document.createElement('p'))
+    popupDescriptionNode.innerHTML = 'You will not be able to recover this list!'
 
-    TodoDataStorage.deleteTodoListByIndex(Number(listIndexToDeleteStr));
+    const deleteBtnHandler = () => {
+        deleteTodoList(index);
+        modalBoxNode.remove();
+    }
+    const deleteTodoDetailBtn = createButtonComponent('finalDeleteList', 'modalBoxButton', 'Yes, delete it!', deleteBtnHandler)
+    modalContentNode.appendChild(deleteTodoDetailBtn);
+
+    const closePopupBtn = createButtonComponent('closePopup', 'modalBoxButton', 'No, keep it!', () => modalBoxNode.remove())
+    modalContentNode.appendChild(closePopupBtn);
+
+    return modalBoxNode;
+}
+
+function deleteTodoList(index) {
+    TodoDataStorage.deleteTodoListByIndex(index);
     printListMenu()
     printTodoDetails(TodoDataStorage.todoAmount() > 0 ? 0 : null)
-
-    closePopup()
 };
